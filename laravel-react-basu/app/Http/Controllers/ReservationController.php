@@ -17,6 +17,7 @@ use App\Enums\QuestionTypeEnum;
 use App\Http\Requests\ReservationUpdateRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Validation\Rule;
 
 class ReservationController extends Controller
 {
@@ -202,7 +203,13 @@ class ReservationController extends Controller
         $validator = Validator::make($data, [
             'question' => 'required|string',
             'type' => [
-                'required', new Enum(QuestionTypeEnum::class)
+                'required', Rule::in(
+                    QuestionTypeEnum::Text->value,
+                    QuestionTypeEnum::Textarea->value,
+                    QuestionTypeEnum::Select->value,
+                    QuestionTypeEnum::Radio->value,
+                    QuestionTypeEnum::Checkbox->value,
+                )
             ],
             'description' => 'nullable|string',
             'data' => 'present',

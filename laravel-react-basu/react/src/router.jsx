@@ -9,6 +9,7 @@ import DefaultLayout from "./components/DefaultLayout";
 import LocationTrack from "./views/LocationTrack";
 import ReservationView from "./views/ReservationView";
 import ReservationDemo from "./views/ReservationDemo";
+import ReservationPublicView from "./views/ReservationPublicView";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/reservation/create",
+        element: <ReservationView />,
+      },
+      {
+        path: "/reservation/:id",
         element: <ReservationView />,
       },
       {
@@ -54,6 +59,10 @@ const router = createBrowserRouter([
         element: <Signup />,
       },
     ],
+  },
+  {
+    path: "/reservation/public/:slug",
+    element: <ReservationPublicView />,
   },
 ]);
 

@@ -2,7 +2,6 @@ import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
-  BellIcon,
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -11,10 +10,12 @@ import { useStateContext } from "../contexts/ContextProvider";
 import axiosClient from "../axios";
 import Footer from "./Footer";
 
+
+
 const navigation = [
   { name: "Dashboard", to: "/" },
   { name: "Reservation", to: "/reservation" },
-  { name: "Reservation Demo", to: "/reservationdemo" },
+  // { name: "Reservation Demo", to: "/reservationdemo" },
   { name: "Shuttle Tracker", to: "/locationtrack" },
 ];
 
@@ -102,7 +103,7 @@ export default function DefaultLayout() {
                           <Menu.Items className="absolute right-0 z-10 mt-2 w-60 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                           <Menu.Item className="bg-slate-600">
                               <div className="block px-4 py-4 text-sm text-white">
-                                Welcome {currentUser.name}
+                                Welcome | {currentUser.name}
                               </div>
                             </Menu.Item>
                             <Menu.Item className="bg-slate-200">
