@@ -1,121 +1,98 @@
-// import { useState, useRef, useEffect } from "react";
-// import PageComponent from "../components/PageComponent";
-// import { MapContainer, TileLayer } from "react-leaflet";
-// import osmProviders from "./osm-providers";
-// import "leaflet/dist/leaflet.css";
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import PageComponent from '../components/PageComponent';
+import TButton from '../components/core/TButton';
 
-// const LocationTrack = () => {
-//   const [center, setCenter] = useState({ lat:14.53106135, lng:121.02142205 });
-//   const ZOOM_LEVEL = 9; // Move the constant here
-//   const mapRef = useRef(); // Create a ref for Map component
-//   const [retryCount, setRetryCount] = useState(0);
+function LocationMarker({ position, setPosition }) {
+  const map = useMapEvents({
+    click() {
+      map.locate();
+    },
+    locationfound(e) {
+      setPosition(e.latlng);
+      map.flyTo(e.latlng, map.getZoom(), { duration: 0.5 }); // Adjust duration here
+    },
+  });
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         // Your code to fetch data, e.g., fetching tiles from MapTiler
-//         const response = await fetch(osmProviders.maptiler.url);
-
-//         if (response.ok) {
-//           // If successful response, reset retry count
-//           setRetryCount(0);
-//         } else if (response.status === 429 && retryCount < 3) {
-//           // If 429 and within retry limit, implement backoff strategy
-//           const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
-//           setRetryCount(retryCount + 1);
-
-//           // Delay before retrying
-//           setTimeout(() => {
-//             fetchData();
-//           }, delay);
-//         } else {
-//           // Handle other error scenarios
-//           console.error("Error:", response.status, response.statusText);
-//         }
-//       } catch (error) {
-//         console.error("Error:", error.message);
-//       }
-//     };
-
-//     fetchData();
-//   }, [retryCount]);
-
-//   return (
-//     <PageComponent title="LocationTrack">
-//       GPS Map
-//       <MapContainer center={center} zoom={ZOOM_LEVEL} ref={mapRef}>
-//         <TileLayer
-//           url={osmProviders.maptiler.url}
-//           attribution={osmProviders.maptiler.attribution}
-//         />
-//       </MapContainer>
-//     </PageComponent>
-//   );
-// };
-
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
-import PageComponent from "../components/PageComponent";
-import "leaflet/dist/leaflet.css";
-import { useState } from "react";
-import { useGeolocation } from "../hooks/useGeolocation";
-import TButton from "../components/core/TButton";
-
-
-export default function LocationTrack() {
-
-  const location = useGeolocation();
-
-  const showMyLocation = () => {
-    if (location.loaded && !location.error){
-      mapRef.current.leafletElement.flyTo([location.coordinates.lat, location.coordinates.lng], 20, {animate: true})
-    }else{
-      alert(location.error.message)
+  useEffect(() => {
+    if (position) {
+      map.flyTo(position, map.getZoom(), { duration: 0.5 });
     }
-  }
+  }, [map, position]);
 
+  return position ? (
+    <Marker position={position}>
+      <Popup>You are here</Popup>
+    </Marker>
+  ) : null;
+}
 
-  const MarkersMap = () => {
-    const [center, setCenter] = useState({ lat: 14.53106135, lng: 121.02142205 })
-    const ZOOM_LEVEL = 20;
-  }
+const LocationTrack = () => {
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      // If geolocation is not supported, show an alert to the user
+      alert('Geolocation is not supported by your browser.');
+    } else {
+      // If geolocation is supported, check if permission is granted
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Permission is granted, do nothing
+        },
+        () => {
+          // Permission is not granted, prompt the user to enable location services
+          setShowLocationPrompt(true);
+        }
+      );
+    }
+  }, []);
+
+  const handleEnableLocationServices = () => {
+    setShowLocationPrompt(false);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Permission is granted after user enables location services, do nothing
+      },
+      () => {
+        // If permission is still not granted after enabling location services, show an alert
+        alert('Please enable location services in your browser settings.');
+      }
+    );
+  };
+
+  const handleResetLocation = () => {
+    setCurrentLocation(null);
+  };
 
   return (
-    <PageComponent title="LocationTracker">
-
-      <div>
-        <h1>GPS Service</h1>
-      </div>
+    <PageComponent>
       <MapContainer
-        center={[14.53106135, 121.02142205]}
+        center={{ lat: 14.5311, lng: -0.09 }}
         zoom={20}
-        scrollWheelZoom={true}
+        scrollWheelZoom={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-
-        {location.loaded && !location.error && (
-          <Marker position={[location.coordinates.lat, location.coordinates.lng]}>
-
-          </Marker>
-        )}
-
-        <Marker position={[14.53106135, 121.02142205]}>
-          <Popup>
-            Asia Pacific College <br /> Main Campus
-          </Popup>
-        </Marker>
+        <LocationMarker position={currentLocation} setPosition={setCurrentLocation} />
       </MapContainer>
-
-          <div className="row my-4">
-            <div className="col d-flex justify-content-center">
-              <TButton className="btn btn-primary" onClick={showMyLocation}>
-                  Locate Me
-              </TButton>
-            </div>
-          </div>
-
+      {showLocationPrompt && (
+        <div className="location-prompt">
+          <p>Please enable location services to use this feature.</p>
+          <button onClick={handleEnableLocationServices}>Enable Location Services</button>
+        </div>
+      )}
+      {currentLocation && (
+        <div className="reset-button">
+          <TButton onClick={handleResetLocation}>Reset Location</TButton>
+        </div>
+      )}
     </PageComponent>
   );
-}
+};
+
+export default LocationTrack;
