@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import PageComponent from '../components/PageComponent';
 import TButton from '../components/core/TButton';
+import { updateLocation, getLocation } from '../axios'; // Import the updateLocation and getLocation functions
 
 function LocationMarker({ position, setPosition }) {
   const map = useMapEvents({
@@ -11,13 +12,15 @@ function LocationMarker({ position, setPosition }) {
     },
     locationfound(e) {
       setPosition(e.latlng);
-      map.flyTo(e.latlng, map.getZoom(), { duration: 0.5 }); // Adjust duration here
+      map.flyTo(e.latlng, map.getZoom(), { duration: 3 }); // Adjust duration here
+      // Update the user's location when found
+      updateLocation(e.latlng.lat, e.latlng.lng); // Call the updateLocation function
     },
   });
 
   useEffect(() => {
     if (position) {
-      map.flyTo(position, map.getZoom(), { duration: 0.5 });
+      map.flyTo(position, map.getZoom(), { duration: 3 });
     }
   }, [map, position]);
 
@@ -65,7 +68,25 @@ const LocationTrack = () => {
 
   const handleResetLocation = () => {
     setCurrentLocation(null);
+    // Update the user's location to null when resetting
+    updateLocation(null, null); // Call the updateLocation function with null values
   };
+
+  useEffect(() => {
+    // Fetch user's location when the component mounts
+    const fetchUserLocation = async () => {
+      try {
+        const location = await getLocation(); // Call the getLocation function
+        if (location) {
+          setCurrentLocation({ lat: location.latitude, lng: location.longitude });
+        }
+      } catch (error) {
+        console.error('Failed to get user location:', error);
+      }
+    };
+
+    fetchUserLocation();
+  }, []);
 
   return (
     <PageComponent>
@@ -79,6 +100,8 @@ const LocationTrack = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <LocationMarker position={currentLocation} setPosition={setCurrentLocation} />
+
+
       </MapContainer>
       {showLocationPrompt && (
         <div className="location-prompt">

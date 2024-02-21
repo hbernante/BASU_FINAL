@@ -1,12 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ReservationController;
 use Illuminate\Support\Facades\Route;
-
-
-Route::post('/reservations', [ReservationController::class, 'store']);
-
 
 /*
 |--------------------------------------------------------------------------
@@ -19,10 +16,16 @@ Route::post('/reservations', [ReservationController::class, 'store']);
 |
 */
 
+Route::post('/reservations', [ReservationController::class, 'store']);
+Route::get('/location', 'LocationController@getLocation');
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::apiResource('reservation',ReservationController::class);
+    Route::post('/location', [LocationController::class, 'updateLocation']);
+    Route::get('/location', [LocationController::class, 'getLocation']);
 });
 
 Route::post('/signup', [AuthController::class,'signup']);

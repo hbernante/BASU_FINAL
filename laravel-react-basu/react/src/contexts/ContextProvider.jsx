@@ -231,6 +231,7 @@ const StateContext = createContext({
   },
   setCurrentUser: () => {},
   setUserToken: () => {},
+  getLocation: () => {},
 });
 
 const tmpReservations = [
@@ -407,6 +408,7 @@ export const ContextProvider = ({ children }) => {
   const [reservations, setReservations] = useState(tmpReservations)
   const [questionTypes] = useState(['text', "select", "radio", "checkbox", "textarea"])
   const [toast, setToast] = useState({message: '', show: false})
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   const setUserToken = (token) => {
     if (token) {
@@ -424,6 +426,24 @@ export const ContextProvider = ({ children }) => {
     }, 5000)
   }
 
+  const updateLocation = async (latitude, longitude) => {
+    try {
+      await axios.post('/location', { latitude, longitude });
+      setCurrentLocation({ latitude, longitude });
+    } catch (error) {
+      console.error('Failed to update location:', error);
+    }
+  };
+
+  const getLocation = async () => {
+    try {
+      const response = await axios.get('/location');
+      setCurrentLocation(response.data);
+    } catch (error) {
+      console.error('Failed to get location:', error);
+    }
+  };
+
   return (
     <StateContext.Provider
       value={{
@@ -434,7 +454,10 @@ export const ContextProvider = ({ children }) => {
         reservations,
         questionTypes,
         toast,
-        showToast
+        showToast,
+        currentLocation,
+        updateLocation,
+        getLocation,
       }}
     >
       {children}
