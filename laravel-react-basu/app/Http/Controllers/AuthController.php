@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
+use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegistrationRequest;
 
 class AuthController extends Controller
 {
@@ -63,5 +66,20 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return $request->user();
+    }
+
+    public function register(RegistrationRequest $request)
+    {
+        $validated = $request->validated();
+
+        $registration = Registration::create([
+            'first_name' => $validated['firstName'],
+            'last_name' => $validated['lastName'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role']
+        ]);
+
+        return response()->json(['message' => 'Registration successful'], 201);
     }
 }

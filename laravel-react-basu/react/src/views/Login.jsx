@@ -46,32 +46,6 @@ export default function Login() {
       });
   };
 
-  //   axiosClient
-  //     .post("/login", {
-  //       email,
-  //       password,
-  //     })
-  //     .then(({ data }) => {
-  //       setCurrentUser(data.user);
-  //       setUserToken(data.token);
-  //       setLoginError("");
-  //     })
-  //     .catch((error) => {
-  //       if (error.response) {
-  //         const finalErrors = Object.values(error.response.data.errors).reduce(
-  //           (accum, next) => [...accum, ...next],
-  //           []
-  //         );
-  //         setError({ __html: finalErrors.join("<br>") });
-  //       }
-  //       setLoginError("Invalid email or password. Please try again.");
-  //       console.error(error);
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // };
-
   return (
     <>
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

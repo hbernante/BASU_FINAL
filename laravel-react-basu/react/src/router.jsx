@@ -9,10 +9,10 @@ import DefaultLayout from "./components/DefaultLayout";
 import LocationTrack from "./views/LocationTrack";
 import ReservationView from "./views/ReservationView";
 import ReservationPublicView from "./views/ReservationPublicView";
-import Account from "./views/AccountRegister";
 import Role from "./views/Role";
 import AccountRegister from "./views/AccountRegister";
 import AccountList from "./views/AccountList";
+import PageComponent from "./components/PageComponent";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +54,14 @@ const router = createBrowserRouter([
       {
         path: "/account/",
         element: <AccountList />,
+      },
+      {
+        path: "/*",
+        element:
+        <PageComponent>
+        <div>Page Not Found</div>
+        </PageComponent>
+        ,
       },
     ],
   },

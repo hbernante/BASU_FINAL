@@ -2,18 +2,49 @@ import React, { useState } from "react";
 import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
 import { Link } from "react-router-dom";
+import { registerUser } from "../axios";
 
 export default function AccountRegister() {
   const [role, setRole] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+  });
 
   const handleRoleChange = (event) => {
     setRole(event.target.value);
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Add role to formData
+      const userData = { ...formData, role };
+      // Call registerUser function with userData
+      const response = await registerUser(userData);
+      console.log(response); // handle successful registration response
+    } catch (error) {
+      console.error("Registration failed:", error); // handle registration error
+    }
+  };
+
   return (
     <PageComponent title="Account Registration" className="">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 className="text-3xl font-medium underline mb-2">CREATE USER ACCOUNT</h1>
+        <h1 className="text-3xl font-medium underline mb-2">
+          CREATE USER ACCOUNT
+        </h1>
         <TButton>
           <Link to="/account" className="">
             Back to Account List
@@ -67,7 +98,7 @@ export default function AccountRegister() {
 
       {(role === "student" || role === "driver") && (
         <div className="container mx-auto px-2">
-          <form className="flex flex-col space-y-4">
+          <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-2">
               <label htmlFor="firstName" className="text-sm font-medium">
                 First Name
@@ -76,6 +107,8 @@ export default function AccountRegister() {
                 type="text"
                 id="firstName"
                 name="firstName"
+                value={formData.firstName} // bind value to state
+                onChange={handleChange} // handle change event
                 className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -88,6 +121,8 @@ export default function AccountRegister() {
                 type="text"
                 id="lastName"
                 name="lastName"
+                value={formData.lastName} // bind value to state
+                onChange={handleChange} // handle change event
                 className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -100,6 +135,8 @@ export default function AccountRegister() {
                 type="email"
                 id="email"
                 name="email"
+                value={formData.email} // bind value to state
+                onChange={handleChange} // handle change event
                 className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
@@ -113,6 +150,8 @@ export default function AccountRegister() {
                   type="tel"
                   id="phoneNumber"
                   name="phoneNumber"
+                  value={formData.phoneNumber} // bind value to state
+                  onChange={handleChange} // handle change event
                   className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -123,21 +162,11 @@ export default function AccountRegister() {
                 Password
               </label>
               <input
-                type="password"
+                type="text"
                 id="password"
                 name="password"
-                className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
+                value={formData.password} // bind value to state
+                onChange={handleChange} // handle change event
                 className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
