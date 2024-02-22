@@ -62,7 +62,7 @@ export const registerUser = async (userData) => {
 // Function to get accounts
 export const getAccounts = async () => {
   try {
-    const response = await axiosClient.get("/user-accounts");
+    const response = await axiosClient.get("/accounts");
     return response.data;
   } catch (error) {
     throw error;

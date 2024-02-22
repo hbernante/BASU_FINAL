@@ -3,6 +3,7 @@ import PageComponent from "../components/PageComponent";
 import { Link } from "react-router-dom";
 import TButton from "../components/core/TButton";
 import { getAccounts } from "../axios"; // Import updated getAccounts function
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
 export default function AccountList() {
   const [accounts, setAccounts] = useState([]);
@@ -21,12 +22,17 @@ export default function AccountList() {
   }, []);
 
   return (
-    <PageComponent title="Account List">
-      <div className="container mx-auto px-4 py-4">
-        <TButton>
-          <Link to="/account/register">Register Account</Link>
+    <PageComponent
+      title="Account List"
+      buttons={
+        <TButton color="green" to="/account/register">
+          <PlusCircleIcon className="h-6 w-6 mr-2" />
+          Register an Account
         </TButton>
-        <table className="min-w-full divide-y divide-gray-200">
+      }
+    >
+      <div className="container mx-auto px-4 py-4 right-0">
+        <table className="min-w-full divide-y divide-gray-200 mt-5">
           <thead className="bg-gray-50">
             <tr>
               <th
@@ -51,12 +57,6 @@ export default function AccountList() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Phone Number
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
                 Roles
               </th>
               {/* Add more columns as needed */}
@@ -66,21 +66,21 @@ export default function AccountList() {
             {accounts.map((account) => (
               <tr key={account.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {account.firstName}
+                  {account.first_name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {account.lastName}
+                  {account.last_name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {account.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {account.phoneNumber}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">{account.email}</td>
+                <td
+                  className={`px-6 py-4 whitespace-nowrap ${
+                    account.role === "driver"
+                      ? "text-yellow-500"
+                      : "text-green-500"
+                  }`}
+                >
                   {account.role}
                 </td>
-                {/* Add more cells as needed */}
               </tr>
             ))}
           </tbody>

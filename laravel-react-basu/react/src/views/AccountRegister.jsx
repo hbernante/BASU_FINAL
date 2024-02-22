@@ -3,6 +3,7 @@ import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
 import { Link } from "react-router-dom";
 import { registerUser } from "../axios";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
 export default function AccountRegister() {
   const [role, setRole] = useState("");
@@ -84,22 +85,18 @@ export default function AccountRegister() {
   };
 
   return (
-    <PageComponent title="Account Registration" className="">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <h1 className="text-3xl font-medium underline mb-2">
-          CREATE USER ACCOUNT
-        </h1>
-        <TButton>
-          <Link to="/account" className="">
-            Back to Account List
-          </Link>
+    <PageComponent title="Account Registration"
+      buttons={
+        <TButton color="green" to="/account">
+          <PlusCircleIcon className="h-6 w-6 mr-2" />
+          Back to Account List
         </TButton>
-      </div>
-
+      }
+    >
       <div className="pt-3 pb-3">
         <label
           htmlFor="roles"
-          className="text-sm font-medium mb-2 flex justify-center"
+          className="text-2xl font-bold mb-2 flex justify-center"
         >
           ROLE:
         </label>
