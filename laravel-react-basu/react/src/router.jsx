@@ -8,8 +8,11 @@ import GuestLayout from "./components/GuestLayout";
 import DefaultLayout from "./components/DefaultLayout";
 import LocationTrack from "./views/LocationTrack";
 import ReservationView from "./views/ReservationView";
-import ReservationDemo from "./views/ReservationDemo";
 import ReservationPublicView from "./views/ReservationPublicView";
+import Account from "./views/AccountRegister";
+import Role from "./views/Role";
+import AccountRegister from "./views/AccountRegister";
+import AccountList from "./views/AccountList";
 
 const router = createBrowserRouter([
   {
@@ -41,8 +44,16 @@ const router = createBrowserRouter([
         element: <LocationTrack />,
       },
       {
-        path: "/reservationdemo",
-        element: <ReservationDemo />,
+        path: "/account/register",
+        element: <AccountRegister />,
+      },
+      {
+        path: "/account/role",
+        element: <Role />,
+      },
+      {
+        path: "/account/",
+        element: <AccountList />,
       },
     ],
   },

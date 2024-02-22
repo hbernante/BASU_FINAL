@@ -15,8 +15,8 @@ import Footer from "./Footer";
 const navigation = [
   { name: "Dashboard", to: "/" },
   { name: "Reservation", to: "/reservation" },
-  // { name: "Reservation Demo", to: "/reservationdemo" },
   { name: "Shuttle Tracker", to: "/locationtrack" },
+  { name: "Accounts", to: "/account" },
 ];
 
 function classNames(...classes) {
