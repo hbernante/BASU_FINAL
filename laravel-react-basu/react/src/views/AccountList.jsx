@@ -12,7 +12,11 @@ export default function AccountList() {
     const fetchAccounts = async () => {
       try {
         const data = await getAccounts(); // Fetch user-created accounts
-        setAccounts(data); // Set accounts state with fetched data
+        setAccounts(data.map(account => ({
+          ...account,
+          first_name: capitalizeFirstLetter(account.first_name),
+          last_name: capitalizeFirstLetter(account.last_name),
+        }))); // Set accounts state with fetched data
       } catch (error) {
         console.error("Error fetching accounts:", error);
       }
@@ -20,6 +24,11 @@ export default function AccountList() {
 
     fetchAccounts();
   }, []);
+
+  // Function to capitalize the first letter of a string
+  const capitalizeFirstLetter = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
 
   return (
     <PageComponent
@@ -79,7 +88,7 @@ export default function AccountList() {
                       : "text-green-500"
                   }`}
                 >
-                  {account.role}
+                  {account.role.toUpperCase()}
                 </td>
               </tr>
             ))}
