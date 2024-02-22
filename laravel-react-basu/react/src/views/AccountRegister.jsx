@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
 import { Link } from "react-router-dom";
@@ -6,6 +6,7 @@ import { registerUser } from "../axios";
 
 export default function AccountRegister() {
   const [role, setRole] = useState("");
+  const [error, setError] = useState({ __html: "" });
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -13,6 +14,21 @@ export default function AccountRegister() {
     phoneNumber: "",
     password: "",
   });
+
+  const [showNotification, setShowNotification] = useState(false);
+
+  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    if (showNotification) {
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => prevCountdown - 1);
+      }, 1000); // Update countdown every second
+
+      // Clear interval when component unmounts or when countdown reaches 0
+      return () => clearInterval(timer);
+    }
+  }, [showNotification]);
 
   const handleRoleChange = (event) => {
     setRole(event.target.value);
@@ -26,16 +42,44 @@ export default function AccountRegister() {
     }));
   };
 
+  const closeNotification = () => {
+    setShowNotification(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError({ __html: "" }); // Clear previous errors
     try {
       // Add role to formData
       const userData = { ...formData, role };
       // Call registerUser function with userData
       const response = await registerUser(userData);
-      console.log(response); // handle successful registration response
+
+      setShowNotification(true);
+
+      // Reset formData to clear the form inputs
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+        password: "",
+      });
+
+      setTimeout(() => {
+        window.location.href = "/account";
+      }, 5000);
     } catch (error) {
       console.error("Registration failed:", error); // handle registration error
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError({ __html: error.response.data.message }); // Set error message
+      } else {
+        setError({ __html: "Credentials Already Taken." }); // Set generic error message
+      }
     }
   };
 
@@ -179,6 +223,39 @@ export default function AccountRegister() {
             </button>
           </form>
         </div>
+      )}
+      {showNotification && (
+        <div
+          className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative m-10"
+          role="alert"
+        >
+          <strong className="font-bold">Success!</strong>
+          <span className="block sm:inline">
+            {" "}
+            Registration successful, redirecting in {countdown} seconds.
+          </span>
+          <span
+            className="absolute top-0 bottom-0 right-0 px-4 py-3"
+            onClick={closeNotification}
+          >
+            <svg
+              className="fill-current h-6 w-6 text-green-500"
+              role="button"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <title>Close</title>
+              <path d="M14.348 14.849a.5.5 0 0 1-.708 0l-4.95-4.95-4.95 4.95a.5.5 0 1 1-.708-.708l4.95-4.95-4.95-4.95a.5.5 0 1 1 .708-.708l4.95 4.95 4.95-4.95a.5.5 0 0 1 .708.708l-4.95 4.95 4.95 4.95a.5.5 0 0 1 0 .708z" />
+            </svg>
+          </span>
+        </div>
+      )}
+
+      {error.__html && (
+        <div
+          className="bg-red-500 rounded py-2 px-3 text-white text-center m-10"
+          dangerouslySetInnerHTML={error}
+        ></div>
       )}
     </PageComponent>
   );
