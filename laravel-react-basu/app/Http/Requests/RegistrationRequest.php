@@ -21,10 +21,13 @@ class RegistrationRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        $id = $this->route('id');
+
         return [
             'firstName' => 'required',
             'lastName' => 'required',
-            'email' => 'required|email|unique:registration',
+            'email' => 'required|email|unique:registration,email,' . $id,
             'password' => 'required|min:6',
             'role' => 'required|in:student,driver'
         ];

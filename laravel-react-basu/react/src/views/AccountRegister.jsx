@@ -8,6 +8,11 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 export default function AccountRegister() {
   const [role, setRole] = useState("");
   const [error, setError] = useState({ __html: "" });
+  const [showNotification, setShowNotification] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false); // State to track if submission is in progress
+  const [countdown, setCountdown] = useState(3);
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -16,9 +21,11 @@ export default function AccountRegister() {
     password: "",
   });
 
-  const [showNotification, setShowNotification] = useState(false);
 
-  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    setLoading(false); // Simulate loading completion
+  }, []);
 
   useEffect(() => {
     if (showNotification) {
@@ -50,6 +57,8 @@ export default function AccountRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError({ __html: "" }); // Clear previous errors
+    setSubmitting(true); // Set submitting flag to true
+
     try {
       // Add role to formData
       const userData = { ...formData, role };
@@ -69,7 +78,7 @@ export default function AccountRegister() {
 
       setTimeout(() => {
         window.location.href = "/account";
-      }, 5000);
+      }, 3000);
     } catch (error) {
       console.error("Registration failed:", error); // handle registration error
       if (
@@ -81,11 +90,14 @@ export default function AccountRegister() {
       } else {
         setError({ __html: "Credentials Already Taken." }); // Set generic error message
       }
+    } finally {
+      setSubmitting(false); // Reset submitting flag regardless of success or failure
     }
   };
 
   return (
-    <PageComponent title="Account Registration"
+    <PageComponent
+      title="Account Registration"
       buttons={
         <TButton color="green" to="/account">
           <PlusCircleIcon className="h-6 w-6 mr-2" />
@@ -93,7 +105,11 @@ export default function AccountRegister() {
         </TButton>
       }
     >
-      <div className="pt-3 pb-3">
+      <div
+        className={`pt-3 pb-3 ${
+          loading ? "opacity-0" : "transition-opacity duration-1000 opacity-100"
+        }`}
+      >
         <label
           htmlFor="roles"
           className="text-2xl font-bold mb-2 flex justify-center"
@@ -138,7 +154,11 @@ export default function AccountRegister() {
       </div>
 
       {(role === "student" || role === "driver") && (
-        <div className="container mx-auto px-2">
+        <div
+          className={`container mx-auto px-2 ${
+            loading ? "opacity-0" : "transition-opacity duration-1000 opacity-100"
+          }`}
+        >
           <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-2">
               <label htmlFor="firstName" className="text-sm font-medium">
@@ -215,8 +235,9 @@ export default function AccountRegister() {
             <button
               type="submit"
               className="items-center px-3 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 focus:outline-none"
+              disabled={submitting} // Disable the button when submitting is true
             >
-              Sign Up
+              {submitting ? "Signing Up..." : "Sign Up"}
             </button>
           </form>
         </div>

@@ -11,11 +11,14 @@ class Registration extends Model
 
     protected $table = 'registration';
 
+    public $timestamps = true;
+
     protected $fillable = [
         'first_name',
         'last_name',
         'email',
         'password',
         'role',
+        'updated_at',
     ];
 }
