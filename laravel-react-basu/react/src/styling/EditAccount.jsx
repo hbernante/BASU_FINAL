@@ -39,8 +39,8 @@ export default function EditAccount({ account }) {
       {/* Modal for editing account details */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
-          <div className="bg-white rounded-lg p-6">
-            <h2 className="text-lg font-bold mb-4">Edit Account</h2>
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+            <h2 className="text-lg font-medium mb-4">Edit Account</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>

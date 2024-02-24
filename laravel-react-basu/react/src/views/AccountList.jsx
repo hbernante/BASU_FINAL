@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
 import { getAccounts } from "../axios";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import Sorting from "../styling/Sorting";
 import Pagination from "../styling/Pagination";
 import AccountRow from "../styling/AccountRow";
@@ -109,7 +109,7 @@ export default function AccountList() {
       title="Account List"
       buttons={
         <TButton color="green" to="/account/register">
-          <PlusCircleIcon className="h-6 w-6 mr-2" />
+          <UserPlusIcon className="h-6 w-6 mr-2" />
           Register an Account
         </TButton>
       }

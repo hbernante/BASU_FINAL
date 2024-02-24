@@ -105,7 +105,7 @@ export default function Dashboard() {
             className="order-4 lg:order-3 row-span-2"
             style={{ animationDelay: '0.3s' }}
           >
-            {data.latestAnswers.length && (
+            {data.latestAnswers && data.latestAnswers.length > 0 ? (
               <div className="text-left">
                 {data.latestAnswers.map((answer) => (
                   <a
@@ -121,10 +121,9 @@ export default function Dashboard() {
                   </a>
                 ))}
               </div>
-            )}
-            {!data.latestAnswers.length && (
+            ) : (
               <div className="text-gray-600 text-center py-16">
-                Your don't have answers yet
+                You don't have answers yet
               </div>
             )}
           </DashboardCard>

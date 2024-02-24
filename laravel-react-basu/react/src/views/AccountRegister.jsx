@@ -3,7 +3,7 @@ import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
 import { Link } from "react-router-dom";
 import { registerUser } from "../axios";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowUturnLeftIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
 export default function AccountRegister() {
   const [role, setRole] = useState("");
@@ -99,8 +99,8 @@ export default function AccountRegister() {
     <PageComponent
       title="Account Registration"
       buttons={
-        <TButton color="green" to="/account">
-          <PlusCircleIcon className="h-6 w-6 mr-2" />
+        <TButton color="indigo" to="/account">
+          <ArrowUturnLeftIcon className="h-6 w-6 mr-2" />
           Back to Account List
         </TButton>
       }
