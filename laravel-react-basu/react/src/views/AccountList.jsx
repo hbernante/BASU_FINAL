@@ -102,12 +102,17 @@ export default function AccountList() {
         account.role.toLowerCase().includes(searchTerm.toLowerCase())
       );
     } else {
-      return account[searchFilter].toLowerCase().includes(searchTerm.toLowerCase());
+      return account[searchFilter]
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
     }
   });
 
   // Update current accounts based on pagination
-  const currentAccounts = filteredAccounts.slice(indexOfFirstAccount, indexOfLastAccount);
+  const currentAccounts = filteredAccounts.slice(
+    indexOfFirstAccount,
+    indexOfLastAccount
+  );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -171,10 +176,27 @@ export default function AccountList() {
                 </th>
               </tr>
             </thead>
-            <tbody className={`bg-white divide-y divide-gray-200 ${isLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}`}>
+            <tbody
+              className={`bg-white divide-y divide-gray-200 ${
+                isLoading
+                  ? "opacity-0"
+                  : "opacity-100 transition-opacity duration-500"
+              }`}
+            >
               {currentAccounts.map((account) => (
-                <AccountRow key={account.id} account={account} onDelete={handleDeleteAccount} />
+                <AccountRow
+                  key={account.id}
+                  account={account}
+                  onDelete={handleDeleteAccount}
+                />
               ))}
+              {filteredAccounts.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="text-center text-gray-500">
+                    No users created yet
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

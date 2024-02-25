@@ -7,24 +7,23 @@ Modal.setAppElement("#root");
 
 export default function DeleteAccount({ account, onDelete, isOpen, onClose }) {
   const [showNotification, setShowNotification] = useState(false);
-
-  // Function to handle deletion completion
-  const handleDeletionComplete = () => {
-    setShowNotification(false); // Hide notification when deletion is complete
-  };
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleConfirmDelete = async () => {
     try {
+      setIsDeleting(true);
       await axios.delete(`http://localhost:8000/api/accounts/${account.id}`);
       onDelete(account.id);
       onClose();
-      setShowNotification(true); // Show notification when deletion process starts
-      handleDeletionComplete(); // Call when deletion is complete
+      setIsDeleting(false);
+      setShowNotification(true);
       setTimeout(() => {
-        window.location.reload();
+        setShowNotification(false);
+        window.location.reload(); // Refresh the page after deletion
       }, 2000);
     } catch (error) {
       console.error("Error deleting account:", error);
+      setIsDeleting(false);
     }
   };
 
@@ -56,13 +55,14 @@ export default function DeleteAccount({ account, onDelete, isOpen, onClose }) {
             <button
               onClick={handleConfirmDelete}
               className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              disabled={isDeleting}
             >
-              Delete
+              {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
         </div>
       </Modal>
-      {showNotification && <Notification message="Deleting in Process..." />}
+      {showNotification && <Notification message="Account Deleted, Reloading Page..." />}
     </>
   );
 }
