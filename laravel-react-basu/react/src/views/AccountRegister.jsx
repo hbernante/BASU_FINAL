@@ -32,6 +32,22 @@ export default function AccountRegister() {
     }));
   };
 
+  const handleSubmissionError = (error) => {
+    if (error.response && error.response.status !== 409) {
+      // Axios error with response (e.g., status code 4xx or 5xx), excluding 409 (conflict)
+      console.error("Axios error:", error.response.data);
+      setError({ __html: error.response.data.message || "An error occurred." });
+    } else if (error.request) {
+      // Axios error without response (e.g., no response received)
+      console.error("Axios error:", error.request);
+      setError({ __html: "No response received from the server." });
+    } else {
+      // Other errors (e.g., network error, HTML validation error)
+      console.error("Error:", error.message);
+      setError({ __html: error.message || "An error occurred." });
+    }
+  };
+
   return (
     <PageComponent
       title="Account Registration"
@@ -110,6 +126,7 @@ export default function AccountRegister() {
               setError={setError}
               setShowNotification={setShowNotification}
               setFormData={setFormData}
+              handleSubmissionError={handleSubmissionError}
             />
           </form>
         </div>
@@ -135,7 +152,7 @@ export default function AccountRegister() {
               viewBox="0 0 20 20"
             >
               <title>Close</title>
-              <path d="M14.348 14.849a.5.5 0 0 1-.708 0l-4.95-4.95-4.95 4.95a.5.5 0 1 1-.708-.708l4.95-4.95-4.95-4.95a.5.5 0 1 1 .708-.708l4.95 4.95 4.95-4.95a.5.5 0 0 1 .708.708l-4.95 4.95 4.95 4.95a.5.5 0 0 1 0 .708z" />
+              <path d="M14.348 14.849a.5.5 0 0 1-.708 0l-4.95-4.95-4.95 4.95a.5.5 0 1 1-.708-.708l4.95-4.95-4.95-4.95a.5.5 0 1 1 .708-.708l4.95 4.95 4.95-4.95a.5.5 0 0 1 .708.708z" />
             </svg>
           </span>
         </div>

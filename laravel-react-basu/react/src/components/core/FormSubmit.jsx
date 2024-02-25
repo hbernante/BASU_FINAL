@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { registerUser } from "../../axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 
-export default function FormSubmit({ formData, role, setError, setShowNotification, setFormData }) {
+export default function FormSubmit({ formData, role, setError, setShowNotification, setFormData, handleSubmissionError }) {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate
 
@@ -48,15 +48,8 @@ export default function FormSubmit({ formData, role, setError, setShowNotificati
       }, 5000); // Hide notification after 5 seconds
     } catch (error) {
       console.error("Registration failed:", error);
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError({ __html: error.response.data.message });
-      } else {
-        setError({ __html: "Credentials Already Taken." });
-      }
+      // Handle submission error using the provided handleSubmissionError function
+      handleSubmissionError(error);
       setSubmitting(false); // Reset submitting flag
     }
   };
