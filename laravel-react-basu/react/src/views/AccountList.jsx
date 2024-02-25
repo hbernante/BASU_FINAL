@@ -163,7 +163,7 @@ export default function AccountList() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className={`bg-white divide-y divide-gray-200 ${isLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}`}>
               {currentAccounts.map((account) => (
                 <AccountRow key={account.id} account={account} onDelete={handleDeleteAccount} />
               ))}

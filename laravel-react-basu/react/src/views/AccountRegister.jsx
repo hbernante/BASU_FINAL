@@ -3,7 +3,10 @@ import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
 import { Link } from "react-router-dom";
 import { registerUser } from "../axios";
-import { ArrowUturnLeftIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUturnLeftIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
 
 export default function AccountRegister() {
   const [role, setRole] = useState("");
@@ -11,7 +14,7 @@ export default function AccountRegister() {
   const [showNotification, setShowNotification] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false); // State to track if submission is in progress
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(1);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -20,8 +23,6 @@ export default function AccountRegister() {
     phoneNumber: "",
     password: "",
   });
-
-
 
   useEffect(() => {
     setLoading(false); // Simulate loading completion
@@ -59,6 +60,19 @@ export default function AccountRegister() {
     setError({ __html: "" }); // Clear previous errors
     setSubmitting(true); // Set submitting flag to true
 
+    // Validate email format
+    const emailRegex =
+      role === "student"
+        ? /^[a-zA-Z0-9._%+-]+@student\.apc\.edu\.ph$/
+        : /^[a-zA-Z0-9._%+-]+@faculty\.apc\.edu\.ph$/;
+    if (!emailRegex.test(formData.email)) {
+      setError({
+        __html: "Email format is invalid. Please use APC Domain",
+      });
+      setSubmitting(false);
+      return;
+    }
+
     try {
       // Add role to formData
       const userData = { ...formData, role };
@@ -78,7 +92,7 @@ export default function AccountRegister() {
 
       setTimeout(() => {
         window.location.href = "/account";
-      }, 3000);
+      }, 1000);
     } catch (error) {
       console.error("Registration failed:", error); // handle registration error
       if (
@@ -156,7 +170,9 @@ export default function AccountRegister() {
       {(role === "student" || role === "driver") && (
         <div
           className={`container mx-auto px-2 ${
-            loading ? "opacity-0" : "transition-opacity duration-1000 opacity-100"
+            loading
+              ? "opacity-0"
+              : "transition-opacity duration-1000 opacity-100"
           }`}
         >
           <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
