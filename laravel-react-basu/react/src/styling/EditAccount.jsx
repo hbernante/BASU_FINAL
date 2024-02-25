@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
-import Notification from "./Notification"; // Import the Notification component
+import Notification from "./Notification";
 
-Modal.setAppElement("#root"); // Set the root element for the modal
+Modal.setAppElement("#root");
 
 export default function EditAccount({ account }) {
-  const [editedAccount, setEditedAccount] = useState(account);
+  const [editedAccount, setEditedAccount] = useState({
+    id: account.id || '',
+    first_name: account.first_name || '',
+    last_name: account.last_name || '',
+    email: account.email || '',
+    password: account.password || '',
+    role: account.role || '',
+    phone_number: account.phone_number || '',
+  });
   const [showModal, setShowModal] = useState(false);
-  const [showNotification, setShowNotification] = useState(false); // State for showing the notification
-  const [errorMessage, setErrorMessage] = useState(""); // State for holding error message
+  const [showNotification, setShowNotification] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,45 +28,69 @@ export default function EditAccount({ account }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    console.log("Submitting form...");
+    e.preventDefault();
+    try {
+      if (!editedAccount.id) {
+        throw new Error("Account ID is missing");
+      }
+      validateEmail();
+      await updateAccount();
+      showSuccessNotification();
+      closeModalAfterDelay();
+    } catch (error) {
+      handleSubmissionError(error);
+      setShowNotification(false); // Hide the notification if there's an error
+    }
+  };
 
-    // Email validation regex patterns
+  const validateEmail = () => {
     const studentEmailRegex = /^[a-zA-Z0-9._%+-]+@student\.apc\.edu\.ph$/;
     const facultyEmailRegex = /^[a-zA-Z0-9._%+-]+@faculty\.apc\.edu\.ph$/;
-
-    // Check if the email matches the appropriate regex based on the role
     const emailRegex =
       editedAccount.role === "student" ? studentEmailRegex : facultyEmailRegex;
     if (!emailRegex.test(editedAccount.email)) {
-      setErrorMessage("Email format is invalid, use APC Domain.");
-      return; // Stop submission if email format is invalid
+      throw new Error("Email format is invalid, use APC Domain.");
     }
+  };
 
+  const updateAccount = async () => {
     try {
-      // Make an API call to update the account
       const response = await axios.put(
         `http://localhost:8000/api/accounts/${editedAccount.id}`,
         editedAccount
       );
       console.log("Account updated successfully:", response.data);
-      // Show notification on successful submission
-      setShowNotification(true);
-      // Close the modal after submission
-      setShowModal(false);
-      // Reload the page after a delay
-      setTimeout(() => window.location.reload(), 2000); // Reload page after 2 seconds
     } catch (error) {
-      console.error("Error updating account:", error);
-      console.log("Validation errors:", error.response.data);
+      console.error("Axios error:", error.response.data);
+      throw new Error("Error updating account");
     }
   };
 
-  useEffect(() => {
-    if (showNotification) {
-      setTimeout(() => setShowNotification(false), 3000); // Hide notification after 3 seconds
+  const showSuccessNotification = () => {
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+  };
+
+  const closeModalAfterDelay = () => {
+    setShowModal(false);
+    setTimeout(() => window.location.reload(), 2000);
+  };
+
+  const handleSubmissionError = (error) => {
+    if (error.response) {
+      // Axios error with response (e.g., status code 4xx or 5xx)
+      console.error("Axios error:", error.response.data);
+      setErrorMessage(error.response.data.message || "An error occurred.");
+    } else if (error.request) {
+      // Axios error without response (e.g., no response received)
+      console.error("Axios error:", error.request);
+      setErrorMessage("No response received from the server.");
+    } else {
+      // Other errors (e.g., network error, HTML validation error)
+      console.error("Error:", error.message);
+      setErrorMessage(error.message || "An error occurred.");
     }
-  }, [showNotification]);
+  };
 
   return (
     <>
@@ -69,7 +101,6 @@ export default function EditAccount({ account }) {
         EDIT
       </button>
 
-      {/* Modal for editing account details */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-lg">
@@ -121,6 +152,22 @@ export default function EditAccount({ account }) {
                   id="email"
                   name="email"
                   value={editedAccount.email}
+                  onChange={handleChange}
+                  className="mt-1 p-2 block w-full rounded-md border-gray-300"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium font-mono text-gray-700"
+                >
+                  Password
+                </label>
+                <input
+                  type="text"
+                  id="password"
+                  name="password"
+                  value={editedAccount.password}
                   onChange={handleChange}
                   className="mt-1 p-2 block w-full rounded-md border-gray-300"
                 />
@@ -184,7 +231,7 @@ export default function EditAccount({ account }) {
         </div>
       )}
       {showNotification && (
-        <Notification message="Updating in Process..." /> // Render the notification
+        <Notification message="Updating in Process..." />
       )}
     </>
   );

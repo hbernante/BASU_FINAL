@@ -7,6 +7,7 @@ import Sorting from "../styling/Sorting";
 import Pagination from "../styling/Pagination";
 import AccountRow from "../styling/AccountRow";
 import axios from "axios";
+import Notification from "../styling/Notification"; // Import the Notification component
 
 export default function AccountList() {
   const [accounts, setAccounts] = useState([]);
@@ -16,6 +17,7 @@ export default function AccountList() {
   const [searchFilter, setSearchFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [accountsPerPage] = useState(12);
+  const [showNotification, setShowNotification] = useState(false); // State for showing the notification
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -49,8 +51,13 @@ export default function AccountList() {
       // For example:
       // const updatedAccounts = accounts.filter(account => account.id !== accountId);
       // setAccounts(updatedAccounts);
+      setShowNotification(true); // Show notification on successful deletion
+      setTimeout(() => {
+        setShowNotification(false);
+        // Refresh data here if needed
+      }, 3000); // Show notification for 3 seconds
     } catch (error) {
-      console.error('Error deleting account:', error);
+      console.error("Error deleting account:", error);
       // Handle error, such as showing an error message to the user
     }
   };
@@ -115,6 +122,7 @@ export default function AccountList() {
       }
     >
       <div className="container mx-auto px-4 py-4">
+        {showNotification && <Notification message="Deleting in Process..." />}
         <div className="flex justify-between mb-4">
           <div>
             <input
