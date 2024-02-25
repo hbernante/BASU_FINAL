@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from "react";
 import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
-import { Link } from "react-router-dom";
-import { registerUser } from "../axios";
 import {
-  ArrowUturnLeftIcon,
-  PlusCircleIcon,
+  ArrowUturnLeftIcon
 } from "@heroicons/react/24/outline";
+import FormFields from "../components/core/FormFields";
+import FormSubmit from "../components/core/FormSubmit";
 
 export default function AccountRegister() {
   const [role, setRole] = useState("");
   const [error, setError] = useState({ __html: "" });
   const [showNotification, setShowNotification] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false); // State to track if submission is in progress
-  const [countdown, setCountdown] = useState(1);
-
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,23 +21,8 @@ export default function AccountRegister() {
   });
 
   useEffect(() => {
-    setLoading(false); // Simulate loading completion
+    setLoading(false);
   }, []);
-
-  useEffect(() => {
-    if (showNotification) {
-      const timer = setInterval(() => {
-        setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000); // Update countdown every second
-
-      // Clear interval when component unmounts or when countdown reaches 0
-      return () => clearInterval(timer);
-    }
-  }, [showNotification]);
-
-  const handleRoleChange = (event) => {
-    setRole(event.target.value);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,64 +30,6 @@ export default function AccountRegister() {
       ...prevState,
       [name]: value,
     }));
-  };
-
-  const closeNotification = () => {
-    setShowNotification(false);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError({ __html: "" }); // Clear previous errors
-    setSubmitting(true); // Set submitting flag to true
-
-    // Validate email format
-    const emailRegex =
-      role === "student"
-        ? /^[a-zA-Z0-9._%+-]+@student\.apc\.edu\.ph$/
-        : /^[a-zA-Z0-9._%+-]+@faculty\.apc\.edu\.ph$/;
-    if (!emailRegex.test(formData.email)) {
-      setError({
-        __html: "Email format is invalid. Please use APC Domain",
-      });
-      setSubmitting(false);
-      return;
-    }
-
-    try {
-      // Add role to formData
-      const userData = { ...formData, role };
-      // Call registerUser function with userData
-      const response = await registerUser(userData);
-
-      setShowNotification(true);
-
-      // Reset formData to clear the form inputs
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-      });
-
-      setTimeout(() => {
-        window.location.href = "/account";
-      }, 1000);
-    } catch (error) {
-      console.error("Registration failed:", error); // handle registration error
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError({ __html: error.response.data.message }); // Set error message
-      } else {
-        setError({ __html: "Credentials Already Taken." }); // Set generic error message
-      }
-    } finally {
-      setSubmitting(false); // Reset submitting flag regardless of success or failure
-    }
   };
 
   return (
@@ -138,7 +61,7 @@ export default function AccountRegister() {
               name="roles"
               value="student"
               checked={role === "student"}
-              onChange={handleRoleChange}
+              onChange={(e) => setRole(e.target.value)}
               className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <label htmlFor="student" className="text-sm font-medium">
@@ -152,7 +75,7 @@ export default function AccountRegister() {
               name="roles"
               value="driver"
               checked={role === "driver"}
-              onChange={handleRoleChange}
+              onChange={(e) => setRole(e.target.value)}
               className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
             />
             <label htmlFor="driver" className="text-sm font-medium">
@@ -175,86 +98,19 @@ export default function AccountRegister() {
               : "transition-opacity duration-1000 opacity-100"
           }`}
         >
-          <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-            <div className="flex flex-col space-y-2">
-              <label htmlFor="firstName" className="text-sm font-medium">
-                First Name
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName} // bind value to state
-                onChange={handleChange} // handle change event
-                className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <label htmlFor="lastName" className="text-sm font-medium">
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName} // bind value to state
-                onChange={handleChange} // handle change event
-                className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div className="flex flex-col space-y-1">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email} // bind value to state
-                onChange={handleChange} // handle change event
-                className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            {role === "driver" && (
-              <div className="flex flex-col space-y-2">
-                <label htmlFor="phoneNumber" className="text-sm font-medium">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={formData.phoneNumber} // bind value to state
-                  onChange={handleChange} // handle change event
-                  className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-            )}
-
-            <div className="flex flex-col space-y-1">
-              <label htmlFor="password" className="text-sm font-medium">
-                Password
-              </label>
-              <input
-                type="text"
-                id="password"
-                name="password"
-                value={formData.password} // bind value to state
-                onChange={handleChange} // handle change event
-                className="rounded-md border border-gray-300 px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="items-center px-3 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-700 focus:ring-4 focus:ring-blue-500 focus:outline-none"
-              disabled={submitting} // Disable the button when submitting is true
-            >
-              {submitting ? "Signing Up..." : "Sign Up"}
-            </button>
+          <form className="flex flex-col space-y-4">
+            <FormFields
+              formData={formData}
+              handleChange={handleChange}
+              role={role}
+            />
+            <FormSubmit
+              formData={formData}
+              role={role}
+              setError={setError}
+              setShowNotification={setShowNotification}
+              setFormData={setFormData}
+            />
           </form>
         </div>
       )}
@@ -266,11 +122,11 @@ export default function AccountRegister() {
           <strong className="font-bold">Success!</strong>
           <span className="block sm:inline">
             {" "}
-            Registration successful, redirecting in {countdown} seconds.
+            Registration successful.
           </span>
           <span
             className="absolute top-0 bottom-0 right-0 px-4 py-3"
-            onClick={closeNotification}
+            onClick={() => setShowNotification(false)}
           >
             <svg
               className="fill-current h-6 w-6 text-green-500"
