@@ -13,6 +13,7 @@ import Role from "./views/Role";
 import AccountRegister from "./views/AccountRegister";
 import AccountList from "./views/AccountList";
 import PageComponent from "./components/PageComponent";
+import PageNotFound from "./views/PageNotFound";
 
 const router = createBrowserRouter([
   {
@@ -59,14 +60,6 @@ const router = createBrowserRouter([
         path: "/account/",
         element: <AccountList />,
       },
-      {
-        path: "/*",
-        element:
-        <PageComponent>
-        <div>Page Not Found</div>
-        </PageComponent>
-        ,
-      },
     ],
   },
   {
@@ -82,6 +75,10 @@ const router = createBrowserRouter([
   {
     path: "/reservation/public/:slug",
     element: <ReservationPublicView />,
+  },
+  {
+    path: "/*",
+    element: <PageNotFound />
   },
 ]);
 

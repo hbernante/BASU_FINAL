@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import PageComponent from "../components/PageComponent";
 import TButton from "../components/core/TButton";
 import { getAccounts } from "../axios";
-import { PlusCircleIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { UserPlusIcon } from "@heroicons/react/24/outline";
 import Sorting from "../styling/Sorting";
 import Pagination from "../styling/Pagination";
 import AccountRow from "../styling/AccountRow";
 import axios from "axios";
-import Notification from "../styling/Notification"; // Import the Notification component
+import Notification from "../styling/Notification";
 
 export default function AccountList() {
   const [accounts, setAccounts] = useState([]);
@@ -17,7 +17,7 @@ export default function AccountList() {
   const [searchFilter, setSearchFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [accountsPerPage] = useState(12);
-  const [showNotification, setShowNotification] = useState(false); // State for showing the notification
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -47,18 +47,12 @@ export default function AccountList() {
   const handleDeleteAccount = async (accountId) => {
     try {
       await axios.delete(`http://localhost:8000/api/accounts/${accountId}`);
-      // Handle successful deletion, such as updating the list of accounts
-      // For example:
-      // const updatedAccounts = accounts.filter(account => account.id !== accountId);
-      // setAccounts(updatedAccounts);
-      setShowNotification(true); // Show notification on successful deletion
+      setShowNotification(true);
       setTimeout(() => {
         setShowNotification(false);
-        // Refresh data here if needed
-      }, 3000); // Show notification for 3 seconds
+      }, 3000);
     } catch (error) {
       console.error("Error deleting account:", error);
-      // Handle error, such as showing an error message to the user
     }
   };
 
@@ -92,7 +86,6 @@ export default function AccountList() {
   const indexOfLastAccount = currentPage * accountsPerPage;
   const indexOfFirstAccount = indexOfLastAccount - accountsPerPage;
 
-  // Filter accounts based on search term and filter criteria
   const filteredAccounts = accounts.filter((account) => {
     if (searchFilter === "all") {
       return (
@@ -108,7 +101,6 @@ export default function AccountList() {
     }
   });
 
-  // Update current accounts based on pagination
   const currentAccounts = filteredAccounts.slice(
     indexOfFirstAccount,
     indexOfLastAccount
@@ -160,10 +152,7 @@ export default function AccountList() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  First Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Name
+                  Full Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Email
@@ -192,7 +181,7 @@ export default function AccountList() {
               ))}
               {filteredAccounts.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="text-center text-gray-500">
+                  <td colSpan="4" className="text-center text-gray-500">
                     No users created yet
                   </td>
                 </tr>

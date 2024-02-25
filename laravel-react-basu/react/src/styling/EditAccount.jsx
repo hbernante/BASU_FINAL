@@ -2,18 +2,19 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import Notification from "./Notification";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 Modal.setAppElement("#root");
 
 export default function EditAccount({ account }) {
   const [editedAccount, setEditedAccount] = useState({
-    id: account.id || '',
-    first_name: account.first_name || '',
-    last_name: account.last_name || '',
-    email: account.email || '',
-    password: account.password || '',
-    role: account.role || '',
-    phone_number: account.phone_number || '',
+    id: account.id || "",
+    first_name: account.first_name || "",
+    last_name: account.last_name || "",
+    email: account.email || "",
+    password: account.password || "",
+    role: account.role || "",
+    phone_number: account.phone_number || "",
   });
   const [showModal, setShowModal] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -94,11 +95,11 @@ export default function EditAccount({ account }) {
 
   return (
     <>
-      <button
+    <button
         onClick={() => setShowModal(true)}
-        className="text-xs text-blue-600 hover:text-blue-900 mr-4"
+        className="text-xs text-blue-600 hover:text-blue-900 flex items-center gap-x-1"
       >
-        EDIT
+        <PencilSquareIcon className="h-5 w-5 mr-1" />
       </button>
 
       {showModal && (
@@ -230,9 +231,7 @@ export default function EditAccount({ account }) {
           </div>
         </div>
       )}
-      {showNotification && (
-        <Notification message="Updating in Process..." />
-      )}
+      {showNotification && <Notification message="Updating in Process..." />}
     </>
   );
 }
